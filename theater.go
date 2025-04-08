@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -11,6 +12,8 @@ import (
 
 // struct that represents the frame
 type frame string
+
+type tickMsg time.Time
 
 // bubbletea model that will play badapple
 type Theater struct {
@@ -54,13 +57,20 @@ func (t Theater) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// green
 			t.color = "#4CFF4D"
 		}
+	case tickMsg:
+		if t.fileNum <= 6573 {
+			newT := t
+			newT.fileNum++
+			return newT, newT.showFrame
+		}
+
 	case frame:
 		log.Debug("Recieved Frame")
 		if t.fileNum <= 6573 {
 			newT := t
 			newT.fileNum++
 			newT.frameStr = string(msg)
-			return newT, newT.showFrame
+			return newT, tick()
 		}
 	}
 
@@ -73,7 +83,15 @@ func (t Theater) View() string {
 	return style.Render()
 }
 
+func tick() tea.Cmd {
+	return tea.Tick(time.Second/30, func(t time.Time) tea.Msg {
+		return tickMsg(t)
+	})
+}
+
 func (t Theater) showFrame() tea.Msg {
+	frameDuration := time.Second / 30
+	time.Sleep(frameDuration)
 	filePath := fmt.Sprintf("./frames/%04d.jpg", t.fileNum)
 
 	c := convert.NewImageConverter()
