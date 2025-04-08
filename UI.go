@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/log"
 	"github.com/qeesung/image2ascii/convert"
 )
@@ -16,6 +17,7 @@ type Theater struct {
 	fileNum  int
 	opts     convert.Options
 	frameStr string
+	color    string
 }
 
 func (t Theater) Init() tea.Cmd {
@@ -37,6 +39,20 @@ func (t Theater) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			log.Debug("Exit on user request")
 			fmt.Println(t.frameStr)
 			return t, tea.Quit
+
+		// SECTION: COLOR CHANGES
+		case "`":
+			// White
+			t.color = "#FFFFFF"
+		case "1":
+			// Red
+			t.color = "#FF191C"
+		case "2":
+			// blue
+			t.color = "#0F33FF"
+		case "3":
+			// green
+			t.color = "#4CFF4D"
 		}
 	case frame:
 		log.Debug("Recieved Frame")
@@ -52,7 +68,9 @@ func (t Theater) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (t Theater) View() string {
-	return t.frameStr
+	style := lipgloss.NewStyle().SetString(t.frameStr).Foreground((lipgloss.Color(t.color)))
+
+	return style.Render()
 }
 
 func (t Theater) showFrame() tea.Msg {

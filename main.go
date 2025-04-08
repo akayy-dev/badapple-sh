@@ -14,8 +14,10 @@ func check(err error) {
 // Takes a pointer to a theater and gives it the default settings.
 func setupTheater(t *Theater) {
 	t.fileNum = 1
+	t.color = "#FFFFFF"
 	t.opts = convert.DefaultOptions
 	t.opts.StretchedScreen = true // stretch to fit
+	t.opts.Colored = false
 }
 
 func main() {
