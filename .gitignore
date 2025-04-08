@@ -1,3 +1,5 @@
 frames/
+.ssh/
+.env
 
 *.log

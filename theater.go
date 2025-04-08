@@ -21,6 +21,9 @@ type Theater struct {
 	opts     convert.Options
 	frameStr string
 	color    string
+	renderer *lipgloss.Renderer
+	width    int
+	height   int
 }
 
 func (t Theater) Init() tea.Cmd {
@@ -40,9 +43,7 @@ func (t Theater) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "q":
 			log.Debug("Exit on user request")
-			fmt.Println(t.frameStr)
 			return t, tea.Quit
-
 		// SECTION: COLOR CHANGES
 		case "`":
 			// White
@@ -72,13 +73,16 @@ func (t Theater) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			newT.frameStr = string(msg)
 			return newT, tick()
 		}
+	case tea.WindowSizeMsg:
+		t.height = msg.Height
+		t.width = msg.Width
 	}
 
 	return t, nil
 }
 
 func (t Theater) View() string {
-	style := lipgloss.NewStyle().SetString(t.frameStr).Foreground((lipgloss.Color(t.color)))
+	style := t.renderer.NewStyle().SetString(t.frameStr).Foreground((lipgloss.Color(t.color)))
 
 	return style.Render()
 }
