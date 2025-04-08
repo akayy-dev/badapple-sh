@@ -63,19 +63,25 @@ func (t Theater) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			newT := t
 			newT.fileNum++
 			return newT, newT.showFrame
+		} else {
+			return t, tea.Quit
 		}
 
 	case frame:
-		log.Debug("Recieved Frame")
 		if t.fileNum <= 6573 {
 			newT := t
 			newT.fileNum++
 			newT.frameStr = string(msg)
 			return newT, tick()
+		} else {
+			return t, tea.Quit
 		}
 	case tea.WindowSizeMsg:
 		t.height = msg.Height
 		t.width = msg.Width
+
+		t.opts.FixedHeight = t.height
+		t.opts.FixedWidth = t.width
 	}
 
 	return t, nil
